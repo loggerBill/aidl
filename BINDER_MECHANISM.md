@@ -51,10 +51,10 @@ public interface IMyAidlInterface extends IInterface {
 - 继承`IInterface`使其成为Binder接口
 - 定义事务码用于方法路由
 
-### 2. Stub（服务端基类）
+### 2. MyAidlStub（服务端基类）
 
 ```java
-abstract class Stub extends Binder implements IMyAidlInterface {
+public abstract class MyAidlStub extends Binder implements IMyAidlInterface {
     
     // 构造时注册接口描述符
     public Stub() {
@@ -73,7 +73,7 @@ abstract class Stub extends Binder implements IMyAidlInterface {
         }
         
         // 跨进程，返回代理对象
-        return new Proxy(obj);
+        return new MyAidlProxy(obj);
     }
     
     // 处理客户端请求（运行在服务端进程）
@@ -100,10 +100,10 @@ abstract class Stub extends Binder implements IMyAidlInterface {
 - 反序列化参数，序列化返回值
 - 方法调用的真正执行者
 
-### 3. Proxy（客户端代理）
+### 3. MyAidlProxy（客户端代理）
 
 ```java
-private static class Proxy implements IMyAidlInterface {
+public class MyAidlProxy implements IMyAidlInterface {
     private IBinder mRemote;
     
     Proxy(IBinder remote) {
@@ -168,7 +168,7 @@ int result = mService.add(5, 3);  // 实际调用Proxy.add()
 
 ```java
 // 1. 服务创建Binder对象
-private final IMyAidlInterface.Stub mBinder = new IMyAidlInterface.Stub() {
+private final MyAidlStub mBinder = new MyAidlStub() {
     @Override
     public int add(int a, int b) {
         return a + b;  // 实际业务逻辑
@@ -182,7 +182,7 @@ public IBinder onBind(Intent intent) {
 }
 
 // 3. onTransact自动路由到具体方法
-// 由Stub基类的onTransact()处理
+// 由MyAidlStub基类的onTransact()处理
 ```
 
 ## 四、数据序列化

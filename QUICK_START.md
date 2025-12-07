@@ -45,8 +45,19 @@ adb shell am start -n com.zhongmin.aidl/.MainActivity
 ### 📄 IMyAidlInterface.java
 仿AIDL接口定义文件
 - 定义了跨进程通信的接口
-- 包含Stub（服务端基类）
-- 包含Proxy（客户端代理）
+- 包含接口描述符和事务码
+
+### 📄 MyAidlStub.java
+Binder服务端基类
+- 服务端继承此类实现业务逻辑
+- 处理客户端的远程调用
+- 包含asInterface方法
+
+### 📄 MyAidlProxy.java
+Binder客户端代理类
+- 客户端通过代理调用远程方法
+- 负责数据序列化和反序列化
+- 发起Binder事务
 
 ### 📄 RemoteService.java
 后台服务（运行在`:remote`进程）

@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(TAG, "onServiceConnected: " + name);
-            mService = IMyAidlInterface.Stub.asInterface(service);
+            mService = MyAidlStub.asInterface(service);
             mBound = true;
             updateStatus("服务已连接");
             appendLog("✓ 服务连接成功");

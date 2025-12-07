@@ -7,26 +7,37 @@
 ## 核心文件
 
 ### 1. IMyAidlInterface.java
-仿AIDL接口定义，手动实现了Binder通信机制：
-- **IMyAidlInterface**: 接口定义，类似于AIDL生成的接口
-- **Stub**: 抽象类，服务端继承此类实现业务逻辑
-  - `onTransact()`: 处理客户端请求
-  - `asInterface()`: 将IBinder转换为接口
-- **Proxy**: 代理类，客户端使用此类调用远程方法
-  - 负责序列化参数
-  - 发起Binder事务
-  - 反序列化返回值
+仿AIDL接口定义：
+- **IMyAidlInterface**: 接口定义，定义跨进程通信的方法
+- 定义接口描述符（DESCRIPTOR）
+- 定义事务码（TRANSACTION_*）
 
-### 2. RemoteService.java
+### 2. MyAidlStub.java
+Binder服务端基类：
+- 继承`Binder`并实现`IMyAidlInterface`
+- **asInterface()**: 将IBinder转换为接口
+- **onTransact()**: 处理客户端请求
+  - 反序列化参数
+  - 调用实际方法
+  - 序列化返回值
+
+### 3. MyAidlProxy.java
+Binder客户端代理类：
+- 实现`IMyAidlInterface`接口
+- 负责序列化参数
+- 通过`transact()`发起Binder事务
+- 反序列化返回值
+
+### 4. RemoteService.java
 后台服务，运行在独立进程`:remote`中：
-- 继承`IMyAidlInterface.Stub`实现业务逻辑
+- 继承`MyAidlStub`实现业务逻辑
 - 实现方法：
   - `getPid()`: 返回进程ID
   - `add(int, int)`: 简单加法运算
   - `getServiceName()`: 返回服务名称
   - `basicTypes()`: 测试基本数据类型传递
 
-### 3. MainActivity.java
+### 5. MainActivity.java
 客户端主界面：
 - 纯Java实现，不使用Compose
 - 绑定/解绑远程服务

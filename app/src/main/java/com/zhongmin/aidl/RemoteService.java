@@ -16,7 +16,7 @@ public class RemoteService extends Service {
     /**
      * Binder实现
      */
-    private final IMyAidlInterface.Stub mBinder = new IMyAidlInterface.Stub() {
+    private final MyAidlStub mBinder = new MyAidlStub() {
         @Override
         public int getPid() throws RemoteException {
             Log.d(TAG, "getPid called, returning: " + Process.myPid());
